@@ -1,5 +1,6 @@
 import { logout } from '@/app/(auth)/actions'
 import { Button } from '@/components/ui/button'
+import { DashboardSidebar } from '@/components/dashboard-sidebar'
 
 export default function DashboardLayout({
   children,
@@ -7,24 +8,24 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
-      <header className="border-b bg-white">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <h1 className="text-xl font-bold">
-            Embroidery Vault
-          </h1>
+    <div className="flex min-h-screen bg-gray-50">
+      <aside className="hidden md:flex fixed inset-y-0 w-64">
+        <DashboardSidebar />
+      </aside>
 
+      <div className="flex flex-1 flex-col md:pl-64">
+        <header className="flex h-16 items-center justify-end border-b bg-white px-4">
           <form action={logout}>
             <Button variant="outline" type="submit">
               Log out
             </Button>
           </form>
-        </div>
-      </header>
+        </header>
 
-      <main className="container mx-auto flex-1 p-4 md:p-8">
-        {children}
-      </main>
+        <main className="flex-1 p-4 md:p-8">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

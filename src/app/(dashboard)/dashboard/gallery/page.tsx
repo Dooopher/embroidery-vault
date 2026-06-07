@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { ImagePreviewDialog } from '@/components/ImagePreviewDialog'
+import { GalleryClient } from '@/components/GalleryClient'
 
 export const metadata = {
   title: 'Design Gallery - Embroidery Vault',
@@ -20,9 +20,9 @@ export default async function GalleryPage() {
   const paths = designs?.map((d) => d.image_url) || []
 
   let signedUrls: {
-  path: string | null
-  signedUrl: string | null
-}[] = []
+    path: string | null
+    signedUrl: string | null
+  }[] = []
 
   if (paths.length > 0) {
     const { data: urlsData, error: urlsError } = await supabase.storage
@@ -43,8 +43,9 @@ export default async function GalleryPage() {
       )
 
       return {
-        ...design,
-        signedUrl: matchedUrl?.signedUrl || '',
+        id: String(design.id),
+        filename: design.filename,
+        url: matchedUrl?.signedUrl || '',
       }
     }) || []
 
@@ -71,48 +72,7 @@ export default async function GalleryPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
-          {designsWithUrls.map((design) => (
-  <ImagePreviewDialog
-    key={design.id}
-    image={{
-      url: design.signedUrl,
-      filename: design.filename,
-    }}
-  >
-    <div className="overflow-hidden rounded-xl border bg-white shadow-sm cursor-pointer">
-      <div className="aspect-square bg-gray-100">
-        {design.signedUrl ? (
-          <img
-            src={design.signedUrl}
-            alt={design.filename}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-xs text-gray-400">
-            Image unavailable
-          </div>
-        )}
-      </div>
-
-      <div className="p-3">
-        <p
-          className="truncate text-sm font-medium"
-          title={design.filename}
-        >
-          {design.filename}
-        </p>
-
-        <p className="mt-1 text-xs text-gray-500">
-          {new Date(
-            design.upload_date
-          ).toLocaleDateString()}
-        </p>
-      </div>
-    </div>
-  </ImagePreviewDialog>
-))}
-        </div>
+        <GalleryClient designs={designsWithUrls} />
       )}
     </div>
   )
